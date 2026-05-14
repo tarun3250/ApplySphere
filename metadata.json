@@ -1,0 +1,6 @@
+{
+  "name": "APEX ApplyAI",
+  "description": "An intelligent AI-powered job application automation platform with enterprise DevOps integration. Features AI resume analysis, automated email campaigns, and comprehensive application tracking.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["AI Resume Analysis", "Automated Email Campaigns", "ATS Optimization", "DevOps Pipelines"]
+}
