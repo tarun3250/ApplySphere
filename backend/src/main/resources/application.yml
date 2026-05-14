@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: applysphere-backend
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:applysphere}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
+    expirationMs: 86400000 # 24 hours
+  gemini:
+    api-key: ${GEMINI_API_KEY:}
+    
+server:
+  port: 8080
+  error:
+    include-message: always
+
+logging:
+  level:
+    com.tarun.applysphere: DEBUG
+    org.springframework.security: INFO
