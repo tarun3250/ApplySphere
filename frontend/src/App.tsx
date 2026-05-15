@@ -1,8 +1,3 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
@@ -14,29 +9,27 @@ import {
   LogOut, 
   Menu, 
   X,
-  Plus,
-  Search,
   Bell,
   Cpu,
-  Mail,
-  Linkedin,
-  Github,
-  ChevronRight,
-  ShieldCheck,
-  Zap,
-  Star,
-  CheckCircle2
+  Users,
 } from 'lucide-react';
 import { cn } from './lib/utils';
 import LandingPage from './pages/LandingPage';
 import Dashboard from './pages/Dashboard';
 import ResumeAnalyzer from './pages/ResumeAnalyzer';
 import JobTracker from './pages/JobTracker';
+import RecruiterCRM from './pages/RecruiterCRM';
+import Analytics from './pages/Analytics';
+import Settings from './pages/Settings';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 
-export default function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [currentPage, setCurrentPage] = useState('landing');
+function AppContent() {
+  const { isAuthenticated, user, logout } = useAuth();
+  const [currentPage, setCurrentPage] = useState('dashboard');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [authView, setAuthView] = useState<'landing' | 'login' | 'register'>('landing');
 
   // Simple routing logic
   const renderPage = () => {
@@ -44,13 +37,18 @@ export default function App() {
       case 'dashboard': return <Dashboard />;
       case 'analyzer': return <ResumeAnalyzer />;
       case 'jobs': return <JobTracker />;
-      case 'landing': return <LandingPage onStart={() => setCurrentPage('dashboard')} />;
-      default: return <LandingPage onStart={() => setCurrentPage('dashboard')} />;
+      case 'crm': return <RecruiterCRM />;
+      case 'analytics': return <Analytics />;
+      case 'settings': return <Settings />;
+      case 'landing': return <LandingPage onStart={() => setAuthView('login')} />;
+      default: return <Dashboard />;
     }
   };
 
-  if (currentPage === 'landing') {
-    return <LandingPage onStart={() => setCurrentPage('dashboard')} />;
+  if (!isAuthenticated) {
+    if (authView === 'landing') return <LandingPage onStart={() => setAuthView('login')} />;
+    if (authView === 'login') return <LoginPage onToggle={() => setAuthView('register')} />;
+    if (authView === 'register') return <RegisterPage onToggle={() => setAuthView('login')} />;
   }
 
   return (
@@ -74,7 +72,8 @@ export default function App() {
             {[
               { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard' },
               { id: 'analyzer', icon: FileSearch, label: 'Resume Parser' },
-              { id: 'jobs', icon: Briefcase, label: 'Recruiter CRM' },
+              { id: 'jobs', icon: Briefcase, label: 'Application Tracker' },
+              { id: 'crm', icon: Users, label: 'Recruiter CRM' },
               { id: 'analytics', icon: BarChart3, label: 'Analytics' },
               { id: 'settings', icon: Settings, label: 'Settings' },
             ].map((item) => (
@@ -97,14 +96,16 @@ export default function App() {
 
         <div className="mt-auto p-4 border-t border-slate-800">
           <div className="flex items-center gap-3 p-3 bg-slate-900 rounded-lg">
-            <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center border border-slate-600 font-medium text-xs">TS</div>
+            <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center border border-slate-600 font-medium text-xs">
+              {user?.name?.[0] || 'U'}
+            </div>
             <div className="overflow-hidden">
-              <p className="text-xs font-semibold text-white truncate">Tarun Singh</p>
-              <p className="text-[10px] text-slate-500 uppercase tracking-wider truncate">DevOps Engineer</p>
+              <p className="text-xs font-semibold text-white truncate">{user?.name || 'User'}</p>
+              <p className="text-[10px] text-slate-500 uppercase tracking-wider truncate">{user?.role || 'Member'}</p>
             </div>
           </div>
           <button 
-            onClick={() => setCurrentPage('landing')}
+            onClick={logout}
             className="w-full mt-2 flex items-center gap-3 px-3 py-2 rounded-md text-slate-500 hover:text-red-400 transition-all text-sm"
           >
             <LogOut className="w-4 h-4" />
@@ -167,3 +168,12 @@ export default function App() {
     </div>
   );
 }
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
+  );
+}
+

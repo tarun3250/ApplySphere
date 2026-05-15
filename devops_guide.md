@@ -97,7 +97,7 @@ spec:
 pipeline {
     agent any
     environment {
-        DOCKER_IMAGE = "tarunsingh/apex-apply-ai"
+        DOCKER_IMAGE = "tarun/apex-apply-ai"
         KUBECONFIG = credentials('kubeconfig-prod')
     }
     stages {

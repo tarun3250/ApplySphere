@@ -13,7 +13,7 @@ import {
   Clock,
   AlertCircle
 } from 'lucide-react';
-import axios from 'axios';
+import api from '../lib/api';
 import { cn } from '../lib/utils';
 import { format } from 'date-fns';
 
@@ -34,26 +34,18 @@ export default function JobTracker() {
 
   const fetchJobs = async () => {
     try {
-      const res = await axios.get('/api/jobs');
+      const res = await api.get('/jobs');
       setJobs(res.data);
     } catch (e) { console.error(e); }
   };
 
   useEffect(() => {
     fetchJobs();
-    // Pre-populate with some mock data if empty
-    if (jobs.length === 0) {
-       setJobs([
-         { id: 1, company: 'Tesla', role: 'SRE Intern', location: 'Austin, TX', status: 'Applied', createdAt: new Date().toISOString(), salary: '$45/hr' },
-         { id: 2, company: 'Amazon', role: 'Backend Engineer', location: 'Remote', status: 'Interview', createdAt: new Date().toISOString(), salary: '$160k' },
-         { id: 3, company: 'Meta', role: 'Production Engineer', location: 'Menlo Park, CA', status: 'Rejected', createdAt: new Date().toISOString() },
-       ]);
-    }
   }, []);
 
   const handleAddJob = async () => {
     try {
-      const res = await axios.post('/api/jobs', newJob);
+      const res = await api.post('/jobs', newJob);
       setJobs([res.data, ...jobs]);
       setShowModal(false);
       setNewJob({ company: '', role: '', location: '', salary: '' });

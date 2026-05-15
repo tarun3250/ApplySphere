@@ -14,7 +14,7 @@ import {
   RefreshCw,
   Quote
 } from 'lucide-react';
-import axios from 'axios';
+import api from '../lib/api';
 import ReactMarkdown from 'react-markdown';
 import { cn } from '../lib/utils';
 
@@ -28,7 +28,7 @@ export default function ResumeAnalyzer() {
     if (!resumeText || !jobDescription) return;
     setLoading(true);
     try {
-      const response = await axios.post('/api/ai/analyze-resume', {
+      const response = await api.post('/ai/analyze-resume', {
         resumeText,
         jobDescription
       });
